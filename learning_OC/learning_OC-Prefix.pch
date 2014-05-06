@@ -1,0 +1,85 @@
+//
+// Prefix header for all source files of the 'learning_OC' target in the 'learning_OC' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
+
+#define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640,1136), [[UIScreen mainScreen] currentMode].size) : NO)
+
+#define CR_URL_BASEURL  @"http://42.121.236.161:8081"
+
+#define CR_URL_HOSTNAME    @"http://42.121.236.161:8081/edu/mobile"
+
+//1.	幻灯片接口(暂定,内容未定.只用参考)
+#define CR_URL_BIGIMAGE    @"http://42.121.236.161:8081/edu/mobile/edu/ppt.html"
+
+//2.	公告接口
+#define CR_URL_NOTICE   @"http://42.121.236.161:8081/edu/mobile/edu/notice.html"
+
+//3.	资讯中心接口
+#define CR_URL_NEW      @"http://42.121.236.161:8081/edu/mobile/edu/news.html"
+
+//4.	资讯公告内容接口
+#define CR_URL_NEW_CONTENT  @"http://42.121.236.161:8081/edu/mobile/edu/newnotice.html"
+
+//5.	精品课程请求
+#define  CR_URL_SELECTCORCE @"http://42.121.236.161:8081/edu/mobile/task/taskcenter.html"
+
+//6.	精品课程内容 请求参数: id 5接口的taskid
+#define CR_URL_SELECTCONTENT @"http://42.121.236.161:8081/edu/mobile/task/catalog.html"
+
+//7.	电子书分类, 视频分类(当前接口为循环接口.当有下个类别时就用code去取下个类别.当无下个类别就调用8接口)
+#define CR_URL_BOOKCATEGORY @"http://42.121.236.161:8081/edu/mobile/edu/bookCategory.html"
+
+//19.	搜索接口(post方式) 请求参数: str 搜索字段  page 页数  row 每页个数
+#define CR_URL_SEARCH   @"http://42.121.236.161:8081/edu/mobile/book/search.html"
+
+
+//20.	取得所有的电子书
+#define CR_URL_ALLBOOK @"http://42.121.236.161:8081/edu/mobile/book/all.html"
+//8.	电子书列表请求   row 每页个数, page 页数, code 通过7接口取的的分类code
+#define CR_URL_BOOKLIST_CATE @"http://42.121.236.161:8081/edu/mobile/book/categorybook.html"
+
+//9.	电子书章节列表请求   请求参数: row 每页个数, page 页数, id 电子书id
+#define CR_URL_BOOK_CATELOG @"http://42.121.236.161:8081/edu/mobile/book/catalog.html"
+
+//10.	电子书内容请求   请求参数: bookId 电子书id,page 章节数
+#define CR_URL_BOOK_DETAIL @"http://42.121.236.161:8081/edu/mobile/book/detail.html"
+
+
+//21	取得所有的视频
+#define CR_URL_ALLVIDEO @"http://42.121.236.161:8081/edu/mobile/course/all.html"
+//11.	视频列表请求  请求参数: row 每页个数, page 页数, code 通过7接口取的的分类code
+#define CR_URL_VIDEOLIST_CATE  @"http://42.121.236.161:8081/edu/mobile/course/categorycourse.html"
+//12.	视频章节列表请求  请求参数: id 视频id
+#define CR_URL_VIDEO_CATELOG @"http://42.121.236.161:8081/edu/mobile/course/catalog.html"
+
+
+
+//13.	学习中心列表
+#define CR_URL_LEARNING_CENTER @""
+
+//14.	考试信息查询请求  请求参数: memberId  id
+#define CR_URL_EXAMCENTER @"http://42.121.236.161:8081/edu/mobile/exam/examcenter.html"
+
+//15.登录接口 请求参数: loginname 用户名  password 密码
+#define CR_URL_LOGIN    @"http://42.121.236.161:8081/edu/mobile/user/login.html"
+
+#define CR_URL_REGISTER @"http://42.121.236.161:8081/edu/mobile/user/registMember.html"
+
+#define CR_URL_AREASELECT @"http://42.121.236.161:8081/edu/mobile/area/getarea.html?code=%@"
+#define CR_URL_TYPESELECT @"http://42.121.236.161:8081/edu/mobile/membertype/getTypes.html?id=%@"
+
+#define CR_URL_GROUPINFO @"http://42.121.236.161:8081/edu/mobile/area/getgroup.html?id=%d"
+
+
+

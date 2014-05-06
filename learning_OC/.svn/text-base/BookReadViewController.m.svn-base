@@ -1,0 +1,153 @@
+//
+//  BookReadViewController.m
+//  learning_OC
+//
+//  Created by test on 3/23/13.
+//  Copyright (c) 2013 viktyz. All rights reserved.
+//
+
+#import "BookReadViewController.h"
+#import "UITools.h"
+#import "NSObject+SBJson.h"
+
+@interface BookReadViewController ()
+
+- (void)showPrePage;
+- (void)showCurrentPage;
+- (void)showNextPage;
+
+@end
+
+@implementation BookReadViewController
+
+@synthesize book;
+
+@synthesize preContentInfo;
+@synthesize currentContentInfo;
+@synthesize nextContentInfo;
+
+@synthesize contentPages;
+
+@synthesize chapterArr;
+@synthesize currentChapter;
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+        type = PageTypeCur;
+        willshowType = PageTypeCur;
+    }
+    return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    
+    NSString *urlStr = [NSString stringWithFormat:@"%@?bookId=%d&page=%d",CR_URL_BOOK_DETAIL,book.bookId,currentChapter.chapterId];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:urlStr]];
+    request.timeOutSeconds = 20;
+    request.tag = type;
+    request.delegate = self;
+    [request startAsynchronous];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+#pragma mark - request Delegate
+- (void)requestFinished:(ASIHTTPRequest *)request{
+    NSString *responseStr = [[NSString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding];
+    
+    NSDictionary *valueDic = [responseStr JSONValue];
+    NSInteger state = [[valueDic objectForKey:@"state"] integerValue];
+    if (state == 200) {
+        
+        GQTBOOKContentInfo *content = [[GQTBOOKContentInfo alloc] init];
+        content.contentId = [[valueDic objectForKey:@"contentId"] integerValue];
+        content.contentPage = [[valueDic objectForKey:@"contentPage"] integerValue];
+        content.contentTitle = [valueDic objectForKey:@"contentTitle"];
+        content.content = [valueDic objectForKey:@"content"];
+        if ([content.content hasPrefix:@"/"] ) {
+            content.type = BookTypeImage;
+        }else{
+            content.type = BookTypeText;
+        }
+        
+        content.bookId = [[valueDic objectForKey:@"bookId"] integerValue];
+        content.bookAuthor = [valueDic objectForKey:@"bookAuthor"];
+        content.bookName = [valueDic objectForKey:@"bookName"];
+        
+        if (request.tag == PageTypeCur) {
+            self.currentContentInfo = content;
+            [self showCurrentPage];
+        }else if(request.tag == PageTypeNext){
+            self.nextContentInfo = content;
+        }else if (request.tag == PageTypePre){
+            self.preContentInfo = content;
+        }
+        
+        [content release];
+    }
+}
+
+- (void)showPrePage{
+    
+}
+
+- (void)showCurrentPage{
+    self.label_chapterTitle.text = self.currentContentInfo.contentTitle;
+    
+    if (currentContentInfo.type == BookTypeText) {
+        UITextView *textView = [[UITextView alloc] init];
+        textView.frame = CGRectMake(0, 0, self.scrollView_Content.frame.size.width, self.scrollView_Content.frame.size.height);
+        [textView setFont:[UIFont systemFontOfSize:12]];
+        [textView setBackgroundColor:[UIColor clearColor]];
+        [textView setText:self.currentContentInfo.contentTitle];
+        
+    }
+    
+    
+}
+
+- (void)showNextPage{
+    
+}
+
+- (void)requestFailed:(ASIHTTPRequest *)request{
+    [UITools showAlert:@"网络有问题，请检查网络!!" delegate:nil];
+}
+
+- (void)dealloc {
+    [book release];
+    [preContentInfo release];
+    [currentContentInfo release];
+    [nextContentInfo release];
+    
+    [contentPages release];
+    [chapterArr release];
+    [currentChapter release];
+    
+    [_label_chapterTitle release];
+    [_scrollView_Content release];
+    [super dealloc];
+}
+
+- (void)viewDidUnload {
+    [self setLabel_chapterTitle:nil];
+    [self setScrollView_Content:nil];
+    [super viewDidUnload];
+}
+@end

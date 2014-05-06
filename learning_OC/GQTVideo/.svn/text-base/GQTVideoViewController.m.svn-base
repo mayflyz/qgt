@@ -1,0 +1,190 @@
+//
+//  GQTVideoViewController.m
+//  learning_OC
+//
+//  Created by viktyz on 13-3-17.
+//  Copyright (c) 2013年 viktyz. All rights reserved.
+//
+
+#import "GQTVideoViewController.h"
+#import "GQTMaticDetailCell.h"
+#import "GQTCourseDetailViewController.h"
+
+#import "GQTCateGoryViewController.h"
+#import "GQTVideoListTableViewController.h"
+#import "UITools.h"
+#import "NSObject+SBJson.h"
+
+@interface GQTVideoViewController ()
+{
+    GQTVideoListTableViewController *listTable;
+    GQTCateGoryViewController *categoryViewController;
+}
+
+@property (retain, nonatomic)  GQTVideoListTableViewController *listTable;
+@property (retain, nonatomic) GQTCateGoryViewController *categoryViewController;
+@end
+
+@implementation GQTVideoViewController
+
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self initNavigationBar];
+    
+    GQTVideoListTableViewController *listViewController = [[GQTVideoListTableViewController alloc] init];
+    [listViewController.view setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    [self.view addSubview:listViewController.view];
+    listTable = listViewController;
+    
+    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightBtn setFrame:CGRectMake(0, 0, 50, 30)];
+    [rightBtn setBackgroundColor:[UIColor clearColor]];
+    [rightBtn.titleLabel setFont:[UIFont systemFontOfSize:14]];
+    [rightBtn.titleLabel setTextColor:[UIColor whiteColor]];
+    [rightBtn setTitle:@"分类" forState:UIControlStateNormal];
+    
+    [rightBtn addTarget:self action:@selector(getTheClassification) forControlEvents:UIControlEventTouchUpInside];
+    
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:rightBtn] autorelease];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+}
+
+#pragma mark --
+- (void)getTheClassification{
+    if (self.categoryViewController != nil) {
+        [self.categoryViewController.view removeFromSuperview];
+        self.categoryViewController = nil;
+        return;
+    }
+    
+    NSURL *urlStr = [NSURL URLWithString:[CR_URL_BOOKCATEGORY stringByAppendingString:@"?code=001001"]];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:urlStr];
+    request.timeOutSeconds = 15;
+    request.delegate = self;
+    [request startAsynchronous];
+}
+
+
+#pragma mark init
+
+-(void)initNavigationBar
+{
+    self.navigationItem.title = @"视频学习";
+}
+
+
+- (void)dealloc {
+    [_view_category release];
+    [super dealloc];
+}
+
+- (void)viewDidUnload {
+    [self setView_category:nil];
+    [super viewDidUnload];
+}
+
+#pragma mark --
+#pragma mark - request
+- (void)requestFinished:(ASIHTTPRequest *)request{
+    NSString *responseStr = [[NSString alloc] initWithData:request.responseData encoding:NSUTF8StringEncoding];
+    NSDictionary *valueDic = [responseStr JSONValue];
+    NSInteger state = [[valueDic objectForKey:@"state"] integerValue];
+    
+    if (state == 200) {
+        NSString *code = [valueDic objectForKey:@"code"];
+        //        NSString *name = [valueDic objectForKey:@"name"];
+        //        NSString *type = [valueDic objectForKey:@"type"];
+        
+        NSMutableArray *tempArr = [[NSMutableArray alloc] initWithCapacity:0];
+        NSArray *categoryList = [valueDic objectForKey:@"categorylist"];
+        for (NSDictionary *temp in categoryList) {
+            GQTCategoryInfo *category = [[GQTCategoryInfo alloc] init];
+            category.categoryId = [[temp objectForKey:@"categoryId"] integerValue];
+            category.categoryName = [temp objectForKey:@"categoryName"];
+            category.categoryCode = [temp objectForKey:@"categoryCode"];
+            category.categoryType = [temp objectForKey:@"categoryType"];
+            category.hasNext = [[temp objectForKey:@"hasNext"] integerValue] == 1;
+            [tempArr addObject:category];
+            [category release];
+        }
+        self.categoryArr = tempArr;
+        [tempArr release];
+        //获取到分类后就把显示出来
+        [self showCategoryInfo:[code isEqualToString:@"001001"]];
+    }
+}
+
+- (void)showCategoryInfo:(BOOL)isTop{
+    
+    GQTCateGoryViewController *viewController = [[GQTCateGoryViewController alloc] init];
+    viewController.categoryArr = self.categoryArr;
+    if (isTop) {
+        viewController.view.frame = CGRectMake(0, 0, 320, [GQTCateGoryViewController heightOfCategoryCount:[self.categoryArr count] isTopCategory:TRUE]);
+        viewController.sigleLineShow = NO;
+        self.categoryViewController = viewController;
+        
+    }else{
+        CGFloat height = [GQTCateGoryViewController heightOfCategoryCount:[self.categoryArr count] isTopCategory:NO];
+        viewController.view.frame = CGRectMake(60, (self.view.frame.size.height - height)/2, 200, height);
+        viewController.sigleLineShow = YES;
+        self.categoryViewController = viewController;
+    }
+    
+    [viewController initCategoryPistion];
+    viewController.delegate = self;
+    
+    if (isTop) {
+        [self.view addSubview:viewController.view];
+    }else{
+        [self.view_category setHidden:NO];
+        [self.view addSubview:viewController.view];
+    }
+    
+    
+    [viewController release];
+}
+
+- (void)categorySelect:(GQTCategoryInfo *)info{
+    if (self.categoryViewController != nil) {
+        [self.categoryViewController.view removeFromSuperview];
+        self.categoryViewController = nil;
+    }
+    
+    [self.view_category setHidden:YES];
+    
+    if (info.hasNext == YES) {
+        NSString *urlStr = [NSString stringWithFormat:@"%@?code=%@",CR_URL_BOOKCATEGORY,info.categoryCode];
+        NSURL *url = [NSURL URLWithString:urlStr];
+        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+        request.timeOutSeconds = 15;
+        request.delegate = self;
+        [request startAsynchronous];
+        
+    }else{
+        NSString *urlStr = [NSString stringWithFormat:@"%@?code=%@",CR_URL_VIDEOLIST_CATE,info.categoryCode];
+        NSString *format = [urlStr stringByAppendingString:@"&page=%d&row=%d"];
+        [listTable setRequestFormat:format requestMoreBy:RequestMoreByPageFromPage];
+        [listTable reloadTableViewDataSource];
+    }
+}
+
+- (void)requestFailed:(ASIHTTPRequest *)request{
+    [UITools showAlert:@"连接失败，请检查网络连接" delegate:nil];
+}
+
+@end

@@ -1,0 +1,20 @@
+//
+//  GQTCommons.m
+//  learning_OC
+//
+//  Created by test on 3/21/13.
+//  Copyright (c) 2013 viktyz. All rights reserved.
+//
+
+#import "GQTCommons.h"
+
+@implementation GQTCommons
+
++ (NSString *)getImageUrl:(NSString *)imagetail{
+    NSString *stringURL = [NSString stringWithFormat:@"%@%@",CR_URL_BASEURL,imagetail];
+    
+    return stringURL;
+}
+
+@end
+

@@ -1,0 +1,122 @@
+//
+//  GQTInfoContenViewController.m
+//  learning_OC
+//
+//  Created by test on 3/24/13.
+//  Copyright (c) 2013 viktyz. All rights reserved.
+//
+
+#import "GQTInfoContenViewController.h"
+
+#import "NSObject+SBJson.h"
+#import "MBProgressHUD.h"
+
+@interface GQTInfoContenViewController ()
+
+@end
+
+@implementation GQTInfoContenViewController
+
+@synthesize noticeId;
+@synthesize noticeContent;
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.removeFromSuperViewOnHide = YES;
+    [hud showWhileExecuting:@selector(requestFromServer) onTarget:self withObject:nil animated:YES];
+    [self.view addSubview:hud];
+    
+    [hud release];
+    
+}
+
+- (void)requestFromServer{
+    NSString *urlStr = [NSString stringWithFormat:@"%@?id=%d",CR_URL_NEW_CONTENT,self.noticeId];
+    
+    NSURL *url = [NSURL URLWithString:urlStr];
+    ASIHTTPRequest *request= [ASIHTTPRequest requestWithURL:url];
+    request.delegate = self;
+    request.timeOutSeconds = 20;
+    
+    [request startAsynchronous];
+
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)dealloc {
+    [noticeContent release];
+    
+    [_label_title release];
+    [_label_source release];
+    [_label_editor release];
+    [_label_sepeter release];
+    [_label_summary release];
+    [_label_content release];
+    [super dealloc];
+}
+
+- (void)viewDidUnload {
+    [self setLabel_title:nil];
+    [self setLabel_source:nil];
+    [self setLabel_editor:nil];
+    [self setLabel_sepeter:nil];
+    [self setLabel_summary:nil];
+    [self setLabel_content:nil];
+    [super viewDidUnload];
+}
+
+- (void)requestFinished:(ASIHTTPRequest *)request{
+    NSString *string=[[[NSString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding] autorelease];
+    NSMutableDictionary *valueDic = [string JSONValue];
+    
+    NSInteger state = [[valueDic objectForKey:@"state"] integerValue];
+    if (state == 200) {
+        NoticeInfoContent *info = [[NoticeInfoContent alloc] init];
+        info.noticeid = [[valueDic objectForKey:@"contentid"] integerValue];
+        info.noticetitle = [valueDic objectForKey:@"contenttitle"];
+        info.noticeeditor = [valueDic objectForKey:@"contenteditor"];
+        info.createTime = [valueDic objectForKey:@"createtime"];
+        info.noticeContent = [valueDic objectForKey:@"contenttext"];
+        info.noticeSummary = [valueDic objectForKey:@"contentsummary"];
+        info.noticeSource = [valueDic objectForKey:@"contentsource"];
+        info.noticeExpiretime = [valueDic objectForKey:@"expiretime"];
+        self.noticeContent = info;
+        [info release];
+    }
+
+    [self reloadNoticeContent];
+}
+
+- (void)reloadNoticeContent{
+    self.label_title.text = self.noticeContent.noticetitle;
+    
+    self.label_editor.text = [NSString stringWithFormat:@"作者；%@",self.noticeContent.noticeeditor];
+    self.label_source.text = [NSString stringWithFormat:@"来源:%@ %@",self.noticeContent.noticeSource,self.noticeContent.createTime];
+    self.label_summary.text = [NSString stringWithFormat:@"摘要:%@",self.noticeContent.noticeSummary];
+    
+    self.label_content.text = [NSString stringWithFormat:@"正文:%@",self.noticeContent.noticeContent];
+ 
+}
+@end

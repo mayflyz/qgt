@@ -1,0 +1,20 @@
+//
+//  AppDelegate.h
+//  learning_OC
+//
+//  Created by viktyz on 13-3-17.
+//  Copyright (c) 2013年 viktyz. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+#define APP_DELEGATE ((AppDelegate *)[[UIApplication sharedApplication] delegate])
+
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
+
+@property (strong, nonatomic) UIWindow              *window;
+@property (nonatomic, retain) UITabBarController    *tabBarMain;
+
+
+- (UINavigationController *)selectedNavigationController;
+@end

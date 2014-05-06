@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>8DF99819-6EC3-4DCC-B438-B1A0C18CF23F</string>
+	<key>IDESourceControlProjectName</key>
+	<string>learning_OC</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>556D5A00-E1E4-4979-BCD1-3D6CCBA001E2</key>
+		<string>svn://192.168.1.109</string>
+		<key>7F4DCDA7-F339-4C2C-9BE3-2E1C793DCF3E</key>
+		<string>http://svnserver/svn/Swamp/iOS/Common/RefreshTableViewController/trunk/Classes</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>svn/qgt/learning_OC.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>556D5A00-E1E4-4979-BCD1-3D6CCBA001E2</key>
+		<string>../../../..</string>
+		<key>7F4DCDA7-F339-4C2C-9BE3-2E1C793DCF3E</key>
+		<string>../../learning_OC/GQTThirdPart/RefreshTableViewController</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>556D5A00-E1E4-4979-BCD1-3D6CCBA001E2</key>
+		<string>svn://192.168.1.109</string>
+		<key>7F4DCDA7-F339-4C2C-9BE3-2E1C793DCF3E</key>
+		<string>http://svnserver/svn/Swamp</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>svn://192.168.1.109/svn/qgt/learning_OC.xcodeproj</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>556D5A00-E1E4-4979-BCD1-3D6CCBA001E2</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>556D5A00-E1E4-4979-BCD1-3D6CCBA001E2</string>
+			<key>IDESourceControlWCCName</key>
+			<string>gqt2</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>7F4DCDA7-F339-4C2C-9BE3-2E1C793DCF3E</string>
+			<key>IDESourceControlWCCName</key>
+			<string>RefreshTableViewController</string>
+		</dict>
+	</array>
+</dict>
+</plist>

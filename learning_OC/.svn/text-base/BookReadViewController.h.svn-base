@@ -1,0 +1,48 @@
+//
+//  BookReadViewController.h
+//  learning_OC
+//
+//  Created by test on 3/23/13.
+//  Copyright (c) 2013 viktyz. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+#import "GQTBookInfo.h"
+#import "ASIHTTPRequest.h"
+
+typedef enum {
+    PageTypePre,
+    PageTypeCur,
+    PageTypeNext
+}PageType;
+
+@interface BookReadViewController : UIViewController<ASIHTTPRequestDelegate,UIScrollViewDelegate>{
+    GQTBookInfo *book;
+    
+    PageType type;
+    
+    GQTBOOKContentInfo *preContentInfo;
+    GQTBOOKContentInfo *currentContentInfo;
+    GQTBOOKContentInfo *nextContentInfo;
+    
+    GQTBookChapterInfo *currentChapter;
+    
+    NSArray *chapterArr;
+    
+    PageType willshowType;
+}
+
+@property (retain, nonatomic) GQTBookInfo *book;
+
+@property (retain, nonatomic) GQTBOOKContentInfo *preContentInfo;
+@property (retain, nonatomic) GQTBOOKContentInfo *currentContentInfo;
+@property (retain, nonatomic) GQTBOOKContentInfo *nextContentInfo;
+
+@property (retain, nonatomic) NSMutableArray *contentPages;
+@property (retain, nonatomic) NSArray *chapterArr;
+@property (retain, nonatomic) GQTBookChapterInfo *currentChapter;
+@property (retain, nonatomic) IBOutlet UILabel *label_chapterTitle;
+@property (retain, nonatomic) IBOutlet UIScrollView *scrollView_Content;
+
+@end

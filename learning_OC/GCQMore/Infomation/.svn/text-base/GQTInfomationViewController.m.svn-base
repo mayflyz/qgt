@@ -1,0 +1,150 @@
+//
+//  GQTInfomationViewController.m
+//  learning_OC
+//
+//  Created by test on 3/17/13.
+//  Copyright (c) 2013 viktyz. All rights reserved.
+//
+
+#import "GQTInfomationViewController.h"
+
+#import "GQTInfomationTableViewController.h"
+#import "GQTSelectCource.h"
+
+#define SUB_VIEW_HIGH           332
+#define HEAD_HIGH               35
+
+@interface GQTInfomationViewController ()
+
+- (void)loadInfoSubViewController;
+- (void)changeSelectSegmentColor;
+
+-(void)initNavigationBar;
+@end
+
+@implementation GQTInfomationViewController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+        
+        if(subViewControllers == nil){
+            subViewControllers = [[NSMutableArray alloc] initWithCapacity:0];
+        }
+        
+        [self loadInfoSubViewController];
+        selectIndex = 0;
+        
+    }
+    return self;
+}
+
+
+-(void)initNavigationBar
+{
+    self.navigationItem.title = @"公告资讯";
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    
+//    [self.infoSelectControl setSelectedSegmentIndex:selectIndex];
+//    [self segmentedSelectClick:self.infoSelectControl];
+    
+    UIButton *button = [[UIButton alloc] init];
+    button.tag = 0;
+    [self segmentedSelectClick:button];
+    [button release];
+    
+    [self.infoContentScrollView setScrollEnabled:NO];
+    
+    [self.noticeBtn setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
+    [self.noticeBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    
+    [self.infomationBtn setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
+    [self.infomationBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    
+    [self initNavigationBar];
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)dealloc {
+    [subViewControllers release];
+    
+    [_infoContentScrollView release];
+    [_noticeBtn release];
+    [_infomationBtn release];
+    [super dealloc];
+}
+- (void)viewDidUnload {
+    [self setInfoContentScrollView:nil];
+    [self setNoticeBtn:nil];
+    [self setInfomationBtn:nil];
+    [super viewDidUnload];
+}
+
+#pragma mark -
+- (IBAction)segmentedSelectClick:(id)sender{
+    UIButton *button = (UIButton *)sender;
+    selectIndex = button.tag;
+    
+    self.infoContentScrollView.frame=CGRectMake(0, HEAD_HIGH, 320, self.infoContentScrollView.frame.size.height);
+    self.infoContentScrollView.contentSize = CGSizeMake(320*[subViewControllers count], self.infoContentScrollView.frame.size.height);
+    
+    [self.infoContentScrollView setContentOffset:CGPointMake(320*selectIndex, 0) animated:NO];
+    GQTInfomationTableViewController* subViewController=(GQTInfomationTableViewController*)[subViewControllers objectAtIndex:selectIndex];
+    subViewController.view.frame=CGRectMake(selectIndex*320,0, 320,self.infoContentScrollView.frame.size.height);
+    [self.infoContentScrollView addSubview:subViewController.view];
+    
+    [self changeSelectSegmentColor];
+}
+
+#pragma mark - 
+- (void)loadInfoSubViewController{
+    //载入子控件
+    GQTInfomationTableViewController *newViewController = [[GQTInfomationTableViewController alloc] initWithNibName:@"GQTInfomationTableViewController" bundle:nil];
+    newViewController.type = InfomationTypeNew;
+    
+    GQTInfomationTableViewController *meticViewController = [[GQTInfomationTableViewController alloc] initWithNibName:@"GQTInfomationTableViewController" bundle:nil];
+    meticViewController.type = InfomationTypeInfo;
+    
+    [subViewControllers addObject:newViewController];
+    [subViewControllers addObject:meticViewController];
+    
+    [newViewController release];
+    [meticViewController release];
+}
+
+- (void)changeSelectSegmentColor{
+    switch (selectIndex) {
+        case 0:
+            {
+                self.noticeBtn.selected = YES;
+                self.infomationBtn.selected = NO;
+            }
+            break;
+        case 1:
+            {
+                self.noticeBtn.selected = NO;
+                self.infomationBtn.selected = YES;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+@end

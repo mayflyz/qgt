@@ -1,0 +1,209 @@
+//
+//  GQTBookChapterListViewController.m
+//  learning_OC
+//
+//  Created by test on 3/22/13.
+//  Copyright (c) 2013 viktyz. All rights reserved.
+//
+
+#import "GQTBookChapterListViewController.h"
+
+#import "AppDelegate.h"
+#import "NSObject+SBJson.h"
+
+#import "GQTBookReadViewController.h"
+
+@interface GQTBookChapterListViewController ()
+
+- (void)handleBookJsonStr:(NSString *)jsonStr;
+- (void)HandleVideoJsonStr:(NSString *)jsonStr;
+
+@end
+
+@implementation GQTBookChapterListViewController
+
+@synthesize book;
+
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    if (book.type == CourseTypeBook) {
+        NSString *catelog = [NSString stringWithFormat:@"%@?id=%d",CR_URL_BOOK_CATELOG,book.bookId];
+        NSString *urlStr = [catelog stringByAppendingString:@"&page=%d&row=%d"];
+        
+        [self setRequestFormat:urlStr requestMoreBy:RequestMoreByPageFromPage];
+        
+    }else if(book.type == CourseTypeVideo){
+        NSString *catelog = [NSString stringWithFormat:@"%@?id=%d",CR_URL_VIDEO_CATELOG,book.bookId];
+        NSString *urlStr = [catelog stringByAppendingString:@"&page=%d&row=%d"];
+        
+        [self setRequestFormat:urlStr requestMoreBy:RequestMoreByPageFromPage];
+    }
+    
+    [super viewDidLoad];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)dealloc{
+    [book release];
+    
+    [super dealloc];
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [self.dataArray count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"ChapterListCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    
+    // Configure the cell...
+    if (cell == nil) {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        
+        UIImage *image_ = [UIImage imageNamed:@"tabholder_active"];
+        UIImageView *imageView_ = [[UIImageView alloc] initWithFrame:CGRectMake(15, (cell.frame.size.height -15)/2, 15, 15)];
+        
+        imageView_.image = image_;
+        [cell.contentView addSubview:imageView_];
+        [imageView_ release];
+        
+        UILabel *label_ = [[UILabel alloc] initWithFrame:CGRectMake(40, 10, 200, 20)];
+        label_.tag = 100;
+        [cell.contentView addSubview:label_];
+        [label_ release];
+    }
+    
+    
+    if (book.type == CourseTypeBook) {
+        
+        GQTBookChapterInfo *chapter = [self.dataArray objectAtIndex:indexPath.row];
+        
+        UILabel *label_name = (UILabel *)[cell.contentView viewWithTag:100];
+        label_name.text = chapter.chapterTitle;
+    }else if(book.type == CourseTypeVideo){
+        
+        GQTVideoChapterInfo *video = [self.dataArray objectAtIndex:indexPath.row];
+        
+        UILabel *label_name = (UILabel *)[cell.contentView viewWithTag:100];
+        label_name.text = video.videoName;
+    }
+    
+    return cell;
+}
+
+
+#pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    if (book.type == CourseTypeBook) {
+        //查看电子书信息
+        GQTBookChapterInfo *chapter = [self.dataArray objectAtIndex:indexPath.row];
+        GQTBookReadViewController *bookRead = [[GQTBookReadViewController alloc] init];
+        bookRead.book = self.book;
+        bookRead.currentChapter = chapter;
+        [[APP_DELEGATE selectedNavigationController] pushViewController:bookRead animated:YES];
+        [bookRead release];
+        
+    }else if(book.type == CourseTypeVideo){
+        
+//        查看视频信息
+//        GQTVideoChapterInfo *video = [self.dataArray objectAtIndex:indexPath.row];
+        MPMoviePlayerViewController *play = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL URLWithString:@"http://ws.asdtv.com/d74150f723/4/d74150f72309fc32fe1ffe9b9a64a654_2.mp4"]];
+        [[APP_DELEGATE selectedNavigationController] presentModalViewController:play animated:YES];
+    }
+}
+
+- (void)loadDataRequestSuccess:(ASIHTTPRequest *)request{
+    NSString *string=[[[NSString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding] autorelease];
+    if (book.type == CourseTypeBook) {
+        [self handleBookJsonStr:string];
+    }else if(book.type == CourseTypeVideo){
+        [self HandleVideoJsonStr:string];
+    }
+}
+
+- (void)handleBookJsonStr:(NSString *)jsonStr{
+    NSMutableDictionary *valueDic = [jsonStr JSONValue];
+    
+    NSInteger state = [[valueDic objectForKey:@"state"] integerValue];
+    NSMutableArray *tempArr = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    if (state == 200) {
+//        NSInteger bookId = [[valueDic objectForKey:@"bookId"] integerValue];
+//        NSInteger recordCount = [[valueDic objectForKey:@"recordCount"] integerValue];
+//        
+//        NSString *bookName = [valueDic objectForKey:@"bookName"];
+//        NSArray *bookAuthor = [valueDic objectForKey:@"bookAuthor"];
+//        NSString *bookCategory = [valueDic objectForKey:@"bookCategory"];
+//        
+//        NSInteger rows = [[valueDic objectForKey:@"rows"] integerValue];
+        
+        NSArray *chapterList = [valueDic objectForKey:@"catalog"];
+        for (NSDictionary *temp in chapterList) {
+            GQTBookChapterInfo *chapter = [[GQTBookChapterInfo alloc] init];
+            
+            chapter.chapterId = [[temp objectForKey:@"contentId"] integerValue];
+            chapter.chapterPageNumber = [[temp objectForKey:@"contentPage"] integerValue];
+            chapter.chapterTitle = [temp objectForKey:@"contentTitle"];
+            [tempArr addObject:chapter];
+            [temp release];
+        }
+    }
+    
+    [self.dataArray addObjectsFromArray:tempArr];
+    [tempArr release];
+
+}
+
+
+- (void)HandleVideoJsonStr:(NSString *)jsonStr{
+    NSMutableDictionary *valueDic = [jsonStr JSONValue];
+    
+    NSInteger state = [[valueDic objectForKey:@"state"] integerValue];
+    NSMutableArray *tempArr = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    if (state == 200) {
+//        NSInteger couserId = [[valueDic objectForKey:@"courseId"] integerValue];
+//        NSString *couserName = [valueDic objectForKey:@"courseName"];
+        
+        NSArray *videoList = [valueDic objectForKey:@"videolist"];
+        
+        for (NSDictionary *temp in videoList) {
+            GQTVideoChapterInfo *video = [[GQTVideoChapterInfo alloc] init];
+            video.videoChapterId = [[temp objectForKey:@"videolist"] integerValue];
+            video.videoTime = [[temp objectForKey:@"videoTime"] integerValue];
+            video.videoUrl = [temp objectForKey:@"videoUrl"];
+            video.videoTeacherId = [[temp objectForKey:@"teacherId"] integerValue];
+            video.videoTeacherName = [temp objectForKey:@"teacherName"];
+            video.videoName = [temp objectForKey:@"videoName"];
+            
+            [tempArr addObject:video];
+            [video release];
+        }
+    }
+    [self.dataArray addObjectsFromArray:tempArr];
+    [tempArr release];
+}
+@end

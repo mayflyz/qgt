@@ -1,0 +1,83 @@
+10
+
+dir
+24
+svn://192.168.1.109/svn/qgt/learning_OC/GQTCommon/GQTTool
+svn://192.168.1.109
+
+
+
+2013-03-17T11:32:56.533979Z
+8
+gqtOne
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9dba7050-7dcb-499b-802c-0889ce74837d
+
+Animation
+dir
+
+Tools
+dir
+
+Lunar
+dir
+
+CacheHelper
+dir
+
+EncryptHelper
+dir
+
+Helper.h
+file
+
+
+
+
+2013-03-18T13:37:27.000000Z
+d1d40cf497b54eb313bd357994bd970e
+2013-03-17T11:24:50.420725Z
+4
+gqtOne
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+262
+
+ResourceHelper
+dir
+
+UITools
+dir
+

@@ -1,0 +1,17 @@
+//
+//  GQTImageBookContentView.h
+//  learning_OC
+//
+//  Created by test on 3/23/13.
+//  Copyright (c) 2013 viktyz. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+#import "EGOImageView.h"
+
+@interface GQTImageBookContentView : UIScrollView
+
+
+
+@end

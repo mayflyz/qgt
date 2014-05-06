@@ -1,0 +1,15 @@
+//
+//  GQTCommons.h
+//  learning_OC
+//
+//  Created by test on 3/21/13.
+//  Copyright (c) 2013 viktyz. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface GQTCommons : NSObject
+
++ (NSString *)getImageUrl:(NSString *)imagetail;
+
+@end

@@ -1,0 +1,133 @@
+10
+
+dir
+0
+svn://192.168.1.109/svn/qgt/learning_OC/GQTRegister
+svn://192.168.1.109
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9dba7050-7dcb-499b-802c-0889ce74837d
+
+GQTRegisterViewController.xib
+file
+
+
+
+add
+
+GQTTypeSelectViewController.h
+file
+
+
+
+add
+
+GQTRegisterViewController.h
+file
+
+
+
+add
+
+GQTUserInfoViewController.xib
+file
+
+
+
+add
+
+GQTTypeSelectViewController.m
+file
+
+
+
+add
+
+GQTRegisterViewController.m
+file
+
+
+
+add
+
+GQTUserInfoViewController.h
+file
+
+
+
+add
+
+GQTUserInfoViewController.m
+file
+
+
+
+add
+
+GQTAreaSelectViewController.xib
+file
+
+
+
+add
+
+GQTLoginViewController.xib
+file
+
+
+
+add
+
+GQTAreaSelectViewController.h
+file
+
+
+
+add
+
+GQTLoginViewController.h
+file
+
+
+
+add
+
+GQTTypeSelectViewController.xib
+file
+
+
+
+add
+
+GQTAreaSelectViewController.m
+file
+
+
+
+add
+
+GQTLoginViewController.m
+file
+
+
+
+add
+
